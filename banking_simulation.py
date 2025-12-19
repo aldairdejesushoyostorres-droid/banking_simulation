@@ -10,37 +10,47 @@ class Account:
         print(f"Account Balance: ${self.balance}")
     
     def deposit(self, amount: float):
-        try:
-            if amount <= 0:
-                print("\nWe can't deposit nothing or a negative amount")
-                return False
-            else:
-                self.balance += amount
-                print(f"\nYou have successfully deposited ${amount} into your bank account")
-                print(f"\nUpdated balance: ${self.balance}")
-                return True
-        except ValueError:
-            print("\nError Message: You have to introduce a numeric value to be deposited!")
+        if amount <= 0:
+            print("\nWe can't deposit nothing or a negative amount")
+            return False
+        else:
+            self.balance += amount
+            print(f"\nYou have successfully deposited ${amount} into your bank account")
+            print(f"\nUpdated balance: ${self.balance}")
+            return True
     
     def withdraw(self, amount: float):
-        try:
-            if amount > self.balance:
-                print(f"\nWe can't withdraw {amount} as it represents more money than your current balance which is: {self.balance}")
-                return False
+        if amount > self.balance:
+            print(f"\nWe can't withdraw ${amount} as it represents more money than your current balance which is: ${self.balance}")
+            return False
+        else:
+            self.balance -= amount
+            print(f"\nYou have successfully withdrawn ${amount}")
+            print(f"\nUpdated balance: ${self.balance}")
+            return True
+class SavingAccount(Account):
+    def __init__(self, account_number: str, account_holder: str, balance: float, interest_rate: float):
+        super().__init__(account_number, account_holder, balance)
+        self.interest_rate = interest_rate
+    
+    def apply_interest(self):
+        self.balance += self.balance*self.interest_rate
+        print(f"\nThe interest rate has been applied, you now have {self.balance}")
+
+class CheckingAccount(Account):
+    def __init__(self, account_number: str, account_holder: str, balance: float, overdraft_limit: float):
+        super().__init__(account_number, account_holder, balance)
+        self.overdraft_limit = overdraft_limit
+    
+    def withdraw(self, amount: float):
+        if (self.balance - amount) < 0 and abs(self.balance - amount) > self.overdraft_limit:
+            print(f"\nWe can't withdraw ${amount} because it would make your balance exceed the overdraft limit which is: ${self.overdraft_limit}")
+            return False
+        else:
+            self.balance -= amount
+            print(f"\nYou have successfully withdrawn ${amount}")
+            if self.balance < 0:
+                print(f"\nYou now owe this: ${abs(self.balance)}")
             else:
-                self.balance -= amount
-                print(f"\nYou have successfully withdrawn ${amount}")
                 print(f"\nUpdated balance: ${self.balance}")
-                return True
-        except ValueError:
-            print("\nError Message: You have to introduce a numeric value to be deposited!")
-
-#Testing Everythig
-
-account1 = Account("1234567890", "Aldair Hoyos", 200000)
-account1.display_balance()
-
-account1.deposit(-200)
-account1.deposit(1200)
-account1.withdraw(400000)
-account1.withdraw(100000)
+            return True
