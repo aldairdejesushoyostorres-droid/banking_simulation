@@ -54,3 +54,36 @@ class CheckingAccount(Account):
             else:
                 print(f"\nUpdated balance: ${self.balance}")
             return True
+
+def test_banking_system():
+    print("--- TESTING SAVINGS ACCOUNT ---")
+    # 1. Create a Savings Account with $100 and 5% interest
+    my_savings = SavingAccount("SAV-001", "Alice", 100.0, 0.05)
+    
+    # 2. Test Interest
+    print(f"Initial Balance: ${my_savings.balance}")
+    my_savings.apply_interest() # Should add $5
+    
+    # 3. Test Withdraw Rule (Savings shouldn't allow overdraft)
+    print("\nAttempting to withdraw $200 from Savings...")
+    my_savings.withdraw(200) # Should fail
+
+    print("\n" + "="*30 + "\n")
+
+    print("--- TESTING CHECKING ACCOUNT ---")
+    # 1. Create Checking with $100 and $50 overdraft limit
+    my_checking = CheckingAccount("CHK-001", "Bob", 100.0, 50.0)
+    
+    # 2. Test Normal Withdraw
+    my_checking.withdraw(50) # Balance becomes 50
+    
+    # 3. Test Overdraft (Withdraw $80, implies $30 overdraft)
+    print("\nAttempting to withdraw $80 (should dip into overdraft)...")
+    my_checking.withdraw(80) 
+    
+    # 4. Test Overdraft Limit (Attempting to go beyond limit)
+    print("\nAttempting to withdraw $1000 (should fail)...")
+    my_checking.withdraw(1000)
+
+if __name__ == "__main__":
+    test_banking_system()
